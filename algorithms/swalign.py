@@ -1,4 +1,5 @@
 import numpy as np
+from tkinter import *
 
 def init_score_mx(seq1, seq2, match_score=1, mismatch_score=-1, gap_penalty=-2):
     n1 = len(seq1) + 1
@@ -19,7 +20,7 @@ def get_max_positions(matrix):
     for i in range(len(max_list[0])):
         idx = max_list[0][i], max_list[1][i]
         max_idx.append(idx)
-    return max_idx
+    return max_idx, matrix.max()
 
 
 def align_sequences(matrix, positions, seq1, seq2):
@@ -75,24 +76,38 @@ def print_stars(seq1, seq2):
             stars += "*"
         else:
             stars += " "
-    print(stars)
+    return (stars)
     
-def print_result(alignments):
+def get_result(alignments):
+    formatted_results = []
     for alignment in alignments:
         align_1 = alignment[0]
         align_2 = alignment[1]
         align_seq1 = "".join(align_1)[::-1]
         align_seq2 = "".join(align_2)[::-1]
-        print(align_seq2)
-        print_stars(align_seq1, align_seq2)
-        print(align_seq1)
-        print("\n")
+        result = f"""
+        {align_seq2}\n
+        {print_stars(align_seq1, align_seq2)}
+        {align_seq1}
+        """
+        formatted_results.append(result)
+    return formatted_results
+
+def display_results(results, score):
+    master = Tk()
+    master.title("Smith-Waterman Alignment")
+    master.minsize(350, 100)
+    for i in range(len(results)):
+        Label(master, text=results[i]).grid(row=0, column=i)
+    Label(master, text=f"Score = {score}").grid(column=len(results))
+    mainloop()
     
 def main(seq1, seq2, match_score=1, mismatch_score=-1, gap_penalty=-2):
     score_mx = init_score_mx(seq1, seq2)
-    max_positions = get_max_positions(score_mx)
+    max_positions, score = get_max_positions(score_mx)
     alignments = align_sequences(score_mx, max_positions, seq1, seq2)
-    print_result(alignments)
+    formatted_results = get_result(alignments)
+    display_results(formatted_results, score)
     
 
 if __name__ == "__main__":
