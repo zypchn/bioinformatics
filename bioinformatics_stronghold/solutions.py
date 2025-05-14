@@ -1,5 +1,5 @@
-from bioinformatic_intro.structures import Nucleotides, DNA_ReverseComplement, RNA_Codons, Monoisotopic_Masses
-from bioinformatic_intro.utilities import readFile
+from structures import Nucleotides, DNA_ReverseComplement, RNA_Codons, Monoisotopic_Masses
+from utilities import readFile
 
 # Counting DNA Nucleotides 
 def countNuc(seq):
@@ -80,3 +80,11 @@ def find_pattern(seq, pattern):
         if window == pattern:
             locations.append(i+1)
     return locations
+
+
+# Rabbits and Recurrence Relations
+def find_num_rabbits(months, offsprings):
+    parent, child = 1, 1
+    for iter in range(months - 1):
+        child, parent = parent, parent + (child * offsprings)
+    return child
