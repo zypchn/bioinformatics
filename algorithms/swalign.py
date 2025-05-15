@@ -1,6 +1,11 @@
 import numpy as np
 from tkinter import *
 
+"""
+Smith-Waterman Implementation
+"""
+
+# score matrix computation
 def init_score_mx(seq1, seq2, match_score=1, mismatch_score=-1, gap_penalty=-2):
     n1 = len(seq1) + 1
     n2 = len(seq2) + 1
@@ -12,6 +17,11 @@ def init_score_mx(seq1, seq2, match_score=1, mismatch_score=-1, gap_penalty=-2):
             matrix[i][j] = max((matrix[i-1][j] + gap_penalty), (matrix[i][j-1] + gap_penalty), (matrix[i-1][j-1] + match), 0)
     return matrix
 
+# get alignment score
+def get_score(matrix):
+    return matrix.max()
+
+# returning the positions with the highest score
 def get_max_positions(matrix):
     max_list = (np.where(matrix == matrix.max())) if matrix.max() > 1 else []
     if max_list == []:
@@ -22,7 +32,7 @@ def get_max_positions(matrix):
         max_idx.append(idx)
     return max_idx, matrix.max()
 
-
+# traceback
 def align_sequences(matrix, positions, seq1, seq2):
     if positions == []:
         print("No aligmnents were found!")
@@ -69,6 +79,7 @@ def align_sequences(matrix, positions, seq1, seq2):
         alignments.append(align)
     return alignments
 
+# for readability of the results
 def print_stars(seq1, seq2):
     stars = ""
     for i in range(len(seq1)):
@@ -77,7 +88,8 @@ def print_stars(seq1, seq2):
         else:
             stars += " "
     return (stars)
-    
+
+# format results    
 def get_result(alignments):
     formatted_results = []
     for alignment in alignments:
@@ -93,6 +105,7 @@ def get_result(alignments):
         formatted_results.append(result)
     return formatted_results
 
+# GUI display 
 def display_results(results, score):
     master = Tk()
     master.title("Smith-Waterman Alignment")
@@ -101,9 +114,10 @@ def display_results(results, score):
         Label(master, text=results[i]).grid(row=0, column=i)
     Label(master, text=f"Score = {score}").grid(column=len(results))
     mainloop()
-    
-def main(seq1, seq2, match_score=1, mismatch_score=-1, gap_penalty=-2):
-    score_mx = init_score_mx(seq1, seq2)
+
+# main function    
+def swalign(seq1, seq2, match_score=1, mismatch_score=-1, gap_penalty=-2):
+    score_mx = init_score_mx(seq1, seq2, match_score, mismatch_score, gap_penalty)
     max_positions, score = get_max_positions(score_mx)
     alignments = align_sequences(score_mx, max_positions, seq1, seq2)
     formatted_results = get_result(alignments)
@@ -119,4 +133,4 @@ if __name__ == "__main__":
     seq1 = "TGTTACGG"  
     seq2 = "GGTTGACTA" 
      
-    main(seq1, seq2)
+    swalign(seq1, seq2)
